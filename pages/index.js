@@ -7,13 +7,15 @@ export default function CardList(props) {
   let el = null;
   let ok = props.ok;
   let data = props.data;
-  const [pageData, setPageData] = useState(new PageData(data));
+  const [container, setContainer] = useState(null);
+  const [pageData] = useState(new PageData(data));
   const [list, setList] = useState(pageData.results);
   const [loading, setLoading] = useState(false);
   const [notMore, setNotMore] = useState(false);
 
   useEffect(() => {
     el = document.getElementById("container");
+    setContainer(el);
     el.addEventListener("scroll", onScroll);
   }, [])
 
@@ -78,9 +80,9 @@ export default function CardList(props) {
       {ok ?
         <>
           {
-            list.map(item => {
+            container && list.map(item => {
               return <div className={styles.cardItem} key={item.url}>
-                <Card info={item} parent={el} setCardInfo={handleSetCardInfo} ></Card>
+                <Card info={item} parent={container} setCardInfo={handleSetCardInfo} ></Card>
               </div>
             })
           }

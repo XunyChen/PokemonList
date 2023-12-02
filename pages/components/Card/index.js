@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import { CARD_STATE } from "../../model/CardInfo";
 
-export default function Card({ info, setCardInfo }) {
+export default function Card({ info, parent, setCardInfo }) {
   let throttle = false
-  let parent = null;
   const el = useRef();
-  const [imgLoading, setImgLoading] = useState(info.id ? false : true);
+  const [imgLoading, setImgLoading] = useState(info.state === CARD_STATE.FINISHED ? false : true);
 
   useEffect(() => {
+    if (info.state === CARD_STATE.FINISHED) {
+      return;
+    }
     parent = document.getElementById("container");
     parent.addEventListener("scroll", onScroll);
     if (isInContainer(el.current, parent)) {
