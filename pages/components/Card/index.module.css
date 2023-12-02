@@ -1,0 +1,162 @@
+.container {
+  display: flex;
+  flex: 1;
+  border-radius: 10px;
+  background: linear-gradient(to bottom right, #a09c9c 0%, #eaeaea 20%, #a09c9c 40%, #eaeaea 60%, #a09c9c 80%, #eaeaea 100%);;
+}
+.background {
+  display: flex;
+  flex: 1;
+  margin: 6px;
+  border-radius: 6px;
+  background: #fff;
+  transition: background-color 0.3s ease;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin: 10px;
+  border-radius: 6px;
+}
+
+.pokemonName {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.formImg {
+  margin-top: 8px;
+  height: 100px;
+  background-color: rgba(255,255,255,0.5);
+  border: 2px solid rgba(230, 230, 230, 0.5);
+  border-radius: 2px;
+  position: relative;
+  text-align: center;
+}
+
+.formImg span {
+  font-size: 18px;
+  font-weight: 500;
+  color: #d9d9d9;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formImg .image {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.formImg .image.loading {
+  opacity: 0;
+}
+
+.formImg .tip {
+  width: 70px;
+  height: 10px;
+  line-height: 11px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px 0 0 0;
+  text-align: right;
+  background-color: rgba(230,230,230,0.5);
+  font-size: 12px;
+  padding-right: 8px;
+}
+
+.statsList {
+  flex: 1;
+  margin-top: 10px;
+  overflow: auto;
+  border: 2px solid rgba(230, 230, 230, 0.5);
+  background-color: rgba(255,255,255,0.5);
+  border-radius: 2px;
+  padding: 6px 10px;
+}
+
+.statsList .item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: #333;
+  font-family: monospace;
+}
+
+.render {
+  background-color: #f3f3f3;
+}
+
+.error {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.error .info {
+  text-align: center;
+}
+
+.error .info p {
+  color: #808080;
+  position: relative;
+  padding-left: 18px;
+}
+
+.error .info p::before {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  line-height: 12px;
+  border-radius: 50%;
+  background-color: #ff6a6a;
+  color: #fff;
+  font-size: 12px;
+  content: "x";
+  position: absolute;
+  left: 0;
+  top: 1px;
+}
+
+.error .info button {
+  margin-top: 10px;
+  background: #fff;
+  border: 1px solid #1b7bff;
+  border-radius: 2px;
+  color: #1b7bff;
+  cursor: pointer;
+}
+.error .info button:active {
+  background: #e9f2ff;
+}
+
+
+.loadingText {
+  border-radius: 2px;
+  height: 20px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.06) 25%, rgba(0, 0, 0, 0.15) 37%, rgba(0, 0, 0, 0.06) 63%);
+  background-size: 400% 100%;
+  animation-name: loading;
+  animation-duration: 1.4s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

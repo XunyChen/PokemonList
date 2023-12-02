@@ -1,65 +1,130 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useEffect, useState } from "react";
+import Card from "./components/Card";
+import styles from "../styles/home.module.css";
+import { PageData } from "./model/PageData";
 
-export default function Home() {
+export default function CardList(props) {
+  let el = null;
+  let ok = props.ok;
+  let data = props.data;
+  const [pageData, setPageData] = useState(new PageData(data));
+  const [list, setList] = useState(pageData.results);
+  const [loading, setLoading] = useState(false);
+  const [notMore, setNotMore] = useState(false);
+
+  useEffect(() => {
+    el = document.getElementById("container");
+    el.addEventListener("scroll", onScroll);
+  }, [])
+
+  async function onScroll() {
+    if (!pageData.next) {
+      return el.removeEventListener("scroll", onScroll);
+    }
+    doGetNextPageList();
+  }
+
+  /**
+   * loading next page data
+   * @param {*} el scroll DOM
+   * @returns 
+   */
+  async function doGetNextPageList() {
+    try {
+      if (loading) {
+        return;
+      }
+      const clientHeight = el.clientHeight;
+      const scrollTop = el.scrollTop;
+      const scrollHeight = el.scrollHeight;
+
+      if (clientHeight + scrollTop === scrollHeight) {
+        setLoading(true);
+        const res = await fetch(pageData.next);
+        if (res.ok) {
+          const data = await res.json();
+          pageData.next = data.next;
+          pageData.previous = data.previous;
+          pageData.concatList(data.results);
+          if (!pageData.next) {
+            setNotMore(true);
+          }
+          setList([...pageData.results]);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
+      }
+    } catch {
+      setLoading(false);
+    }
+  }
+
+  /**
+   * get card detail info and update list data
+   * @param {*} cardInfo card detail info
+   */
+  function handleSetCardInfo(cardInfo) {
+    pageData.results[cardInfo.index] = cardInfo;
+    setList([...pageData.results]);
+  }
+
+  function handleGetCardList() {
+    window.location.reload();
+  }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+    <div className={styles.container} id="container">
+      {ok ?
+        <>
+          {
+            list.map(item => {
+              return <div className={styles.cardItem} key={item.url}>
+                <Card info={item} parent={el} setCardInfo={handleSetCardInfo} ></Card>
+              </div>
+            })
+          }
+          {
+            notMore ?
+            <></> :
+            <>
+              {loading && <div>loading...</div>}
+            </>
+          }
+        </> :
+        <div>
+          <p>Error</p>
+          <button className={styles.reload} onClick={e => handleGetCardList()}>reload</button>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      }
     </div>
   )
+}
+
+export async function getStaticProps() {
+  try {
+    const res = await fetch("https://pokeapi.co/api/v2/pokemon");
+    if (res.ok) {
+      const data = await res.json();
+      return {
+        props: {
+          ok: true,
+          data,
+        }
+      }
+    }
+    return {
+      props: {
+        ok: false,
+        data: null,
+      },
+    }
+  } catch {
+    return {
+      props: {
+        ok: false,
+        data: null,
+      }
+    }
+  }
 }
